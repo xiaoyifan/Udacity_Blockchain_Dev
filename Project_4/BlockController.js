@@ -38,7 +38,7 @@ class BlockController {
 
             let body = req.body;
 
-            if(isEmpty(body)){
+            if(this.isEmpty(body)){
                 res.send({"error": "empty request"});
             }
 
@@ -52,13 +52,15 @@ class BlockController {
                 this.updateValidationWindow(requestObject);
 
             }else{
-                requestObject = RequestObject.RequestObject(address);
+                requestObject = new RequestObject.RequestObject(address);
                 this.mempool.push(requestObject);
-                self.timeoutRequests[address]=setTimeout(function(){ 
-                    self.removeValidationRequest(address);
-                }, requestObject.validationWindow * 1000 );
+                this.timeoutRequests[address] = setTimeout(() => {
+                    this.removeValidationRequest(address)
+                }, requestObject.validationWindow * 1000);  
 
             }
+
+            res.send(requestObject);
 
         });
     }
@@ -67,7 +69,10 @@ class BlockController {
     validation(){
 
         this.app.post("/message-signature/validate", (req, res) => {
-            if(isEmpty(body)){
+
+            let body = req.body;
+
+            if(this.isEmpty(body)){
                 res.send({"error": "empty request"});
             }
 
@@ -77,24 +82,27 @@ class BlockController {
             let requestObject;
 
             if(index > -1){
+                requestObject = this.mempool[index];
                 this.updateValidationWindow(requestObject);
 
                 if(requestObject.validationWindow < 0){
                     res.send({"error": "time for validation request timeout"});
+                    return;
                 }
 
                 if(!bitcoinMessage.verify(requestObject.message, address, signature)){
                     res.send({"error": "Signature verification failed"});
+                    return;
                 }
 
                 //then logic here should be init an valid request object
                 //remove validatiojnrequest, timeoutRequests
-                let validRequest = new ValidRequest.ValidRequest(requestObject);
+                let validRequest = new ValidRequest.validRequest(requestObject);
 
-                delete this.timeoutRequests(address);
+                delete this.timeoutRequests[address];
                 this.removeValidationRequest(address);
 
-                res.send(validrRequest);
+                res.send(validRequest);
             }else{
                 res.send({"error": "Request is not found"})
             }
@@ -130,7 +138,7 @@ class BlockController {
         this.app.post("/block", (req, res) => {
             var body = req.body;
 
-            if(isEmpty(body)){
+            if(this.isEmpty(body)){
                 res.send({"error": "empty request"});
             }
 
