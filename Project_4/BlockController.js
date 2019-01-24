@@ -54,9 +54,9 @@ class BlockController {
             }else{
                 requestObject = new RequestObject.RequestObject(address);
                 this.mempool.push(requestObject);
-                this.timeoutRequests[address] = setTimeout(() => {
+                this.timeoutRequests[address]=setTimeout(function(){ 
                     this.removeValidationRequest(address)
-                }, requestObject.validationWindow * 1000);  
+                }, requestObject.validationWindow * 1000 );
 
             }
 
@@ -98,6 +98,9 @@ class BlockController {
                 //then logic here should be init an valid request object
                 //remove validatiojnrequest, timeoutRequests
                 let validRequest = new ValidRequest.validRequest(requestObject);
+                console.log("valid request: ", validRequest);
+                this.mempoolValid.push(validRequest);
+                console.log("mempool valid: ", this.mempoolValid);
 
                 delete this.timeoutRequests[address];
                 this.removeValidationRequest(address);
@@ -145,6 +148,9 @@ class BlockController {
             let star = body.star;
             let address = body.address;
 
+            console.log("star is: ", star);
+            console.log("address is: ", address);
+
             if (star instanceof Array || !this.verifyAddressRequest(address)){
                 res.json({"error": "data format is wrong"});
             }
@@ -181,6 +187,8 @@ class BlockController {
 
     verifyAddressRequest(address){
         let index = this.mempoolValid.findIndex(obj => obj.walletAddress === address);
+
+        console.log("index for valid mempool is: ", index);
         if(index > -1){
             return true;
         }
