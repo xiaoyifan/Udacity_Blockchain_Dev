@@ -11,4 +11,4 @@ class StarData{
     }
 }
 
-module.exports.StartData = StarData;
+module.exports.StarData = StarData;

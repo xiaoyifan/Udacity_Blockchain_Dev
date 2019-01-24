@@ -1,5 +1,5 @@
 const SHA256 = require('crypto-js/sha256');
-const BlockClass = require('./Block.js');
+const Block = require('./Block.js');
 const BlockChain = require('./BlockChain.js');
 const RequestObject = require('./RequestObject.js');
 const ValidRequest = require('./validRequest.js');
@@ -155,8 +155,8 @@ class BlockController {
                 res.json({"error": "data format is wrong"});
             }
             else{
-                starData = StarData.StarData(address, star);
-                let blockAux = new BlockClass.Block(starData);
+                let starData = new Star.StarData(address, star);
+                let blockAux = new Block.Block(starData);
             
                 self.blockchain.addBlock(blockAux).then((result) => {
                     console.log(result);
@@ -186,7 +186,8 @@ class BlockController {
 
 
     verifyAddressRequest(address){
-        let index = this.mempoolValid.findIndex(obj => obj.walletAddress === address);
+        console.log("mempoolValid: ", this.mempoolValid);
+        let index = this.mempoolValid.findIndex(obj => obj.status.walletAddress === address);
 
         console.log("index for valid mempool is: ", index);
         if(index > -1){
