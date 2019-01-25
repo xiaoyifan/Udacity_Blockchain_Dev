@@ -3,6 +3,8 @@
 /===================================================*/
 
 const level = require('level');
+const hex2ascii = require('hex2ascii');
+
 const chainDB = './chaindata';
 
 class LevelSandbox {
@@ -14,6 +16,7 @@ class LevelSandbox {
     // Get data from levelDB with key (Promise)
     getLevelDBData(key){
         let self = this;
+        console.log("key is: ", key);
         return new Promise(function(resolve, reject) {
             // Add your code here, remember un Promises you need to resolve() or reject()
             self.db.get(key, (err, value) => {
@@ -25,7 +28,9 @@ class LevelSandbox {
                                     reject(err);
                                 }
                             }else {
-                                resolve(value);
+                                let block = JSON.parse(value);
+                                self.decodeStory(block);
+                                resolve(block);
                             }
             });
         });
@@ -89,6 +94,60 @@ class LevelSandbox {
     }
 
 
+    // Method that get the block object by hash
+    getBlockByHash(hash) {
+        let self = this;
+        return new Promise(function(resolve, reject){
+            // Add your code here, remember un Promises you need to resolve() or reject()
+            self.block = null;
+            console.log("the hash is: ", hash);
+            self.db.createReadStream().on('data', function (data) {
+                      let block = JSON.parse(data.value);
+
+                      if(block.hash === hash){
+                          console.log("here?")
+                          self.decodeStory(block);
+                          self.block = block;
+                      }
+                 })
+                .on('error', function (err) {
+                    // reject with error
+                    reject(err);
+                 })
+                 .on('close', function () {
+                    //resolve with the count value
+                     resolve(self.block);
+                });
+        });
+    }
+
+
+    // Method that get the block object by hash
+    getBlockByWalletAddress(walletAddress) {
+        let self = this;
+        return new Promise(function(resolve, reject){
+            // Add your code here, remember un Promises you need to resolve() or reject()
+            self.blocks = [];
+            console.log("the wallet address is: ", walletAddress);
+            self.db.createReadStream().on('data', function (data) {
+                        let block = JSON.parse(data.value);
+                        console.log("block got: ", block.body.address);
+                        if(block.body && block.body.address === walletAddress){
+                            self.decodeStory(block);
+                            self.blocks.push(block);
+                        }
+                    })
+                .on('error', function (err) {
+                    // reject with error
+                    reject(err);
+                    })
+                    .on('close', function () {
+                    //resolve with the count value
+                        resolve(self.blocks);
+                });
+        });
+    }
+
     // Method that return the height
     getChain() {
         let self = this;
@@ -108,6 +167,15 @@ class LevelSandbox {
                      resolve(self.chain);
                 });
         });
+    }
+
+    decodeStory(block){
+
+        if(block.body && block.body.star && block.body.star.story){
+            block.body.star.storyDecoded = hex2ascii(block.body.star.story);
+        }
+
+        
     }
 
 

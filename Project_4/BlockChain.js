@@ -85,9 +85,10 @@ class Blockchain {
 
     // Get Block By Height
     getBlock(height){
+        console.log("height: ", height);
         return new Promise((resolve, reject) => {
             this.bd.getLevelDBData(height).then((value) => {
-                resolve(JSON.parse(value));
+                resolve(value);
             }).catch((err) => {
                 reject(err);
             });
@@ -111,6 +112,28 @@ class Blockchain {
                 console.log('validateBlock: Unable to get block #'+height);
                 reject(err);
             })
+        });
+    }
+
+    getBlockByHash(hash){
+        return new Promise((resolve, reject) => {
+            this.bd.getBlockByHash(hash).then((block) => {
+                console.log("block returned from hash: ", block);
+                resolve(block);
+            }).catch((err) => {
+                reject(err);
+            });
+        });
+    }
+
+    getBlockByWalletAddress(walletAddress){
+        return new Promise((resolve, reject) => {
+            this.bd.getBlockByWalletAddress(walletAddress).then((blocks) => {
+                console.log("block returned from wallet: ", blocks);
+                resolve(blocks);
+            }).catch((err) => {
+                reject(err);
+            });
         });
     }
 

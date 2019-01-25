@@ -24,6 +24,8 @@ class BlockController {
         this.postNewBlock();
         this.requestValidation();
         this.validation();
+        this.getBlockByHash();
+        this.getBlockByWalletAddress();
 
         this.mempool = [];
         this.timeoutRequests = [];
@@ -122,19 +124,19 @@ class BlockController {
         this.app.get("/block/:height", (req, res) => {
             // Add your code here
             console.log("params: ", req.params)
-            var index = req.params['index'];
+            var index = req.params['height'];
 
             self.blockchain.getBlock(index).then((block) => {
                 res.json(block);
             }).catch((err) => { 
-                res.json("get block at index " + index +"failed");
+                res.json("get block at index " + index +" failed");
             });
 
         });
     }
 
     /**
-     * Implement a POST Endpoint to add a new Block, url: "/api/block"
+     * Implement a POST Endpoint to add a new Block, url: "/block"
      */
     postNewBlock() {
         let self = this;
@@ -172,6 +174,39 @@ class BlockController {
         });
     }
 
+
+    getBlockByHash(){
+        let self = this;
+        this.app.get("/stars/hash::hash", (req, res) => {
+            let hash = req.params.hash;
+            self.blockchain.getBlockByHash(hash).then((block) => {
+                if(block === null){
+                    res.send({"error": "block not found"});
+                }else{
+                    res.send(block);
+                }
+            }).catch((err) => {
+                res.send({"error": "hash not found"});
+            });
+        });
+    }
+
+
+    getBlockByWalletAddress(){
+        let self = this;
+        this.app.get("/stars/address::address", (req, res) => {
+            let address = req.params.address;
+            self.blockchain.getBlockByWalletAddress(address).then((blocks) => {
+                if(blocks === null || blocks === undefined){
+                    res.send({"error": "blocks not found"});
+                }else{
+                    res.send(blocks);
+                }
+            }).catch((err) => {
+                res.send({"error": "wallet address not found"});
+            });
+        });
+    }
 
     isEmpty(obj){
         return !Object.keys(obj).length;
