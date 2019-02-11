@@ -21,7 +21,7 @@
  * phrase from a file you've .gitignored so it doesn't accidentally become public.
  *
  */
-
+const HDWalletProvider = require('truffle-hdwallet-provider');
 // const HDWallet = require('truffle-hdwallet-provider');
 // const infuraKey = "fj4jll3k.....";
 //
@@ -72,6 +72,18 @@ module.exports = {
       // timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
       // skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
     // },
+
+    rinkeby: {
+      provider: () => new HDWalletProvider("develop mesh rebel notable romance ugly grunt eagle split forum tenant awful", `https://rinkeby.infura.io/v3/b618dd14190346049a2d04835ac944f6`),
+      // network_id: 3,       // Ropsten's id
+      // gas: 5500000,        // Ropsten has a lower block limit than mainnet
+      // confirmations: 2,    // # of confs to wait between deployments. (default: 0)
+      // timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
+      // skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
+      network_id: '4',
+      gas: 4500000,
+      gasPrice: 10000000000,
+    },
 
     // Useful for private networks
     // private: {

@@ -80,8 +80,9 @@ it('can add the star name and star symbol properly', async() => {
     let instance = await StarNotary.deployed();
     let tokenId = 6;
     await instance.createStar('Awesome Star!', tokenId, {from: accounts[0]})
-    assert.equal(await instance.name.call(tokenId), 'Udacity Five Token');
-    assert.equal(await instance.symbol.call(tokenId), 'UDCT');
+
+    assert.equal(await instance.name.call(), 'Udacity Five Token');
+    assert.equal(await instance.symbol.call(), 'UDCT');
     //2. Call the name and symbol properties in your Smart Contract and compare with the name and symbol provided
 });
 
@@ -96,11 +97,11 @@ it('lets 2 users exchange stars', async() => {
     await instance.createStar('awesome star A', starId1, {from: user1});
     await instance.createStar('awesome star B', starId2, {from: user2});
     // 2. Call the exchangeStars functions implemented in the Smart Contract
-    await instance.exchangeStars(starId1, starId2);
+    await instance.exchangeStars(starId1, starId2, {from:user1});
 
     // 3. Verify that the owners changed    
-    assert.equal(ownerOf(starId1), user2);
-    assert.equal(ownerOf(starId2), user1);
+    assert.equal(await instance.ownerOf.call(starId1), user2);
+    assert.equal(await instance.ownerOf.call(starId2), user1);
 });
 
 it('lets a user transfer a star', async() => {
@@ -111,19 +112,19 @@ it('lets a user transfer a star', async() => {
     let tokenId = 9;
     await instance.createStar("new star yall", tokenId, {from: user1});
     // 2. use the transferStar function implemented in the Smart Contract
-    await instance.transferStar(user2, tokenId);
+    await instance.transferStar(user2, tokenId, {from: user1});
     // 3. Verify the star owner changed.
-    assert.equal(ownerOf(tokenId), user2);
+    assert.equal(await instance.ownerOf(tokenId), user2);
 });
 
 it('lookUptokenIdToStarInfo test', async() => {
     // 1. create a Star with different tokenId
     let instance = await StarNotary.deployed();
-    let user = account[1];
+    let user = accounts[1];
     let tokenId = 10;
     await instance.createStar("best star ever",tokenId, {from: user});
     // 2. Call your method lookUptokenIdToStarInfo
-    let token_name = await instance.lookUptokenIdToStarInfo(tokenId);
+    let token_name = await instance.lookUptokenIdToStarInfo(tokenId, {from: user});
     // 3. Verify if you Star name is the same
-    assert.equal(token_name == "Udacity Five Token");
+    assert.equal(token_name, "best star ever");
 });
