@@ -207,13 +207,13 @@ class Blockchain {
                     let block = self.chain[i];
                     let validation = await block.validate();
                     if (!validation){
-                        reject(Error("validating data error at block height: ", i));
+                        errorLog.push(Error("Error: validating data error at block height: ", i));
                     } else if (block.previousBlockHash != self.chain[i-1].hash) {
-                        reject(Error("validating previous hash at block height: ", i));
+                        errorLog.push(Error("Error: validating previous hash at block height: ", i));
                     }
                 }
                 if (errorLog) {
-                    resolve(errorLog);
+                    reject(errorLog);
                 } else {
                     resolve("Chain is valid.");
                 }
