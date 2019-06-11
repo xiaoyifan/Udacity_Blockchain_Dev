@@ -4,9 +4,10 @@ import "../wineaccesscontrol/ConsumerRole.sol";
 import "../wineaccesscontrol/DistributorRole.sol";
 import "../wineaccesscontrol/RetailerRole.sol";
 import "../wineaccesscontrol/FarmerRole.sol";
+import "../winecore/Ownable.sol";
 
 // Define a contract 'Supplychain'
-contract SupplyChain is FarmerRole, DistributorRole, RetailerRole, ConsumerRole {
+contract SupplyChain is Ownable, FarmerRole, DistributorRole, RetailerRole, ConsumerRole {
 
   // Define 'owner'
   address owner;

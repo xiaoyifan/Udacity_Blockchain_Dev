@@ -14,7 +14,7 @@ contract Ownable {
     }
 
     /// Look up the address of the owner
-    function owner() public view returns (address) {
+    function Owner() public view returns (address) {
         return origOwner;
     }
 
@@ -44,6 +44,6 @@ contract Ownable {
     function _transferOwnership(address newOwner) internal {
         require(newOwner != address(0));
         emit TransferOwnership(origOwner, newOwner);
-        origOwner = newOwner;
+        origOwner = address(newOwner);
     }
 }
