@@ -2,6 +2,27 @@
 
 This repository containts an Ethereum DApp that demonstrates a Supply Chain flow between a Seller and Buyer. The user story is similar to any commonly used supply chain process. A Seller can add items to the inventory system stored in the blockchain. A Buyer can purchase such items from the inventory system. Additionally a Seller can mark an item as Shipped, and similarly a Buyer can mark an item as Received.
 
+## UML diagrams
+
+The diagrams folder contains the UML diagrams for the supply chain.
+
+### Activity diagram
+
+![Activity diagram](images/activity_diagram.png)
+
+### Sequence diagram
+
+![Sequence diagram](diagrams/sequence_diagram.png)
+
+### State diagram
+
+![State diagram](diagrams/state_diagram.png)
+
+### Classes diagram
+
+![Classes diagram](diagrams/class_diagram.png)
+
+
 The DApp User Interface when running should look like...
 
 ![truffle test](images/ftc_product_overview.png)
@@ -57,10 +78,6 @@ In a separate terminal window, Compile smart contracts:
 ```
 truffle compile
 ```
-
-Your terminal should look something like this:
-
-![truffle test](images/truffle_compile.png)
 
 This will create the smart contract artifacts in folder ```build\contracts```.
 
