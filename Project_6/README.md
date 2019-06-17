@@ -44,10 +44,6 @@ These instructions will get you a copy of the project up and running on your loc
 
 Please make sure you've already installed ganache-cli, Truffle and enabled MetaMask extension in your browser.
 
-```
-Give examples (to be clarified)
-```
-
 ### Installing
 
 A step by step series of examples that tell you have to get a development env running
@@ -108,6 +104,15 @@ In a separate terminal window, launch the DApp:
 ```
 npm run dev
 ```
+
+## Address on Rinkeby
+
+Transaction ID
+0xad1c4bd38ce2d3a0a9faf7be5db2675e9c448c331b45fd6b6188a66532619d50
+
+Contract address
+https://rinkeby.etherscan.io/address/0xd33D5AB3521af20B11fC9118fBA9868d50dF5463
+
 
 ## Built With
 
