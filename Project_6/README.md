@@ -12,11 +12,11 @@ The diagrams folder contains the UML diagrams for the supply chain.
 
 ### Sequence diagram
 
-![Sequence diagram](diagrams/sequence_diagram.png)
+![Sequence diagram](images/sequence_diagram.png)
 
 ### State diagram
 
-![State diagram](diagrams/state_diagram.png)
+![State diagram](images/state_diagram.png)
 
 ### Classes diagram
 
