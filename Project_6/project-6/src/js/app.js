@@ -160,7 +160,84 @@ App = {
             case 10:
                 return await App.fetchItemBufferTwo(event);
                 break;
+            case 11:
+                return await App.registerFarmer(event);
+                break;
+            case 12:
+                return await App.registerDistributor(event);
+                break;
+            case 13:
+                return await App.registerRetailer(event);
+                break;
+            case 14: 
+                return await App.registerConsumer(event);
+                break;
             }
+    },
+
+    registerFarmer: function(event){
+        event.preventDefault();
+        var processId = parseInt($(event.target).data('id'));
+    
+        App.ownerID = $("#ownerID").val();
+        App.contracts.SupplyChain.deployed().then(function (instance) {
+            console.log("originalFarmerID: ", App.originFarmerID);
+            console.log("current owner ID is: ", App.ownerID);
+          return instance.addFarmer(App.originFarmerID, { from: App.ownerID });
+        }).then(function(result) {
+          $("#ftc-item").text(result);
+          console.log('registerFarmer', result);
+        }).catch(function (err) {
+          console.log(err.message);
+        });
+    },
+
+    registerDistributor: function(event){
+        event.preventDefault();
+        var processId = parseInt($(event.target).data('id'));
+    
+        App.ownerID = $("#ownerID").val();
+        App.contracts.SupplyChain.deployed().then(function (instance) {
+            console.log("current owner ID is: ", App.ownerID);
+          return instance.addDistributor(App.distributorID, { from: App.ownerID });
+        }).then(function(result) {
+          $("#ftc-item").text(result);
+          console.log('registerDistributor', result);
+        }).catch(function (err) {
+          console.log(err.message);
+        });
+    },
+
+    registerRetailer: function(event){
+        event.preventDefault();
+        var processId = parseInt($(event.target).data('id'));
+    
+        App.ownerID = $("#ownerID").val();
+        App.contracts.SupplyChain.deployed().then(function (instance) {
+            console.log("current owner ID is: ", App.ownerID);
+          return instance.addRetailer(App.retailerID, { from: App.ownerID });
+        }).then(function(result) {
+          $("#ftc-item").text(result);
+          console.log('registerRetailer', result);
+        }).catch(function (err) {
+          console.log(err.message);
+        });
+    },
+
+    registerConsumer: function(event){
+        event.preventDefault();
+        var processId = parseInt($(event.target).data('id'));
+    
+        App.ownerID = $("#ownerID").val();
+        App.contracts.SupplyChain.deployed().then(function (instance) {
+            console.log("current owner ID is: ", App.ownerID);
+          return instance.addConsumer(App.consumerID, { from: App.ownerID });
+        }).then(function(result) {
+          $("#ftc-item").text(result);
+          console.log('registerConsumer', result);
+        }).catch(function (err) {
+          console.log(err.message);
+        });
     },
 
     harvestItem: function(event) {
