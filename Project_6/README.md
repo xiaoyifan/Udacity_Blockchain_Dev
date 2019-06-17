@@ -99,7 +99,7 @@ Test smart contracts:
 truffle test
 ```
 
-All 10 tests should pass.
+All 11 tests should pass.
 
 ![truffle test](images/truffle_test.png)
 
@@ -112,18 +112,11 @@ npm run dev
 ## Built With
 
 * [Ethereum](https://www.ethereum.org/) - Ethereum is a decentralized platform that runs smart contracts
-* [IPFS](https://ipfs.io/) - IPFS is the Distributed Web | A peer-to-peer hypermedia protocol
-to make the web faster, safer, and more open.
 * [Truffle Framework](http://truffleframework.com/) - Truffle is the most popular development framework for Ethereum with a mission to make your life a whole lot easier.
 
+## Versions
 
-## Authors
-
-See also the list of [contributors](https://github.com/your/project/contributors.md) who participated in this project.
-
-## Acknowledgments
-
-* Solidity
-* Ganache-cli
-* Truffle
-* IPFS
+* Truffle v5.0.2 (core: 5.0.2)
+* Solidity v0.5.0 (solc-js)
+* Node v10.15.0
+* Web3 1.0.0-beta.55
