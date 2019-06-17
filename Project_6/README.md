@@ -20,18 +20,20 @@ The diagrams folder contains the UML diagrams for the supply chain.
 
 ### Classes diagram
 
-![Classes diagram](diagrams/class_diagram.png)
+![Classes diagram](images/class_diagram.png)
 
 
 The DApp User Interface when running should look like...
 
-![truffle test](images/ftc_product_overview.png)
+![truffle test](images/product_overview.png)
 
-![truffle test](images/ftc_farm_details.png)
+![truffle test](images/role_assignment.png)
 
-![truffle test](images/ftc_product_details.png)
+![truffle test](images/farm_details.png)
 
-![truffle test](images/ftc_transaction_history.png)
+![truffle test](images/product_details.png)
+
+![truffle test](images/transaction_history.png)
 
 
 ## Getting Started
