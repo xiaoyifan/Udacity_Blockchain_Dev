@@ -1,11 +1,10 @@
-pragma solidity >=0.4.25;
+pragma solidity ^0.4.25;
 
 // It's important to avoid vulnerabilities due to numeric overflow bugs
 // OpenZeppelin's SafeMath library, when used correctly, protects agains such bugs
 // More info: https://www.nccgroup.trust/us/about-us/newsroom-and-events/blog/2018/november/smart-contract-insecurity-bad-arithmetic/
 
 import "../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
-import "./FlightSuretyData.sol";
 
 /************************************************** */
 /* FlightSurety Smart Contract                      */
@@ -16,10 +15,6 @@ contract FlightSuretyApp {
     /********************************************************************************************/
     /*                                       DATA VARIABLES                                     */
     /********************************************************************************************/
-
-    // Arbitrary constants
-    uint256 MinimumAirlinesCount = 4;
-    uint8 private constant CREDIT_RATE = 150;
 
     // Flight status codees
     uint8 private constant STATUS_CODE_UNKNOWN = 0;
@@ -34,24 +29,12 @@ contract FlightSuretyApp {
     struct Flight {
         bool isRegistered;
         uint8 statusCode;
-        uint256 updatedTimestamp;
+        uint256 updatedTimestamp;        
         address airline;
     }
     mapping(bytes32 => Flight) private flights;
 
-    FlightSuretyData dataContract;
-
-    bool private operational = true;
-
-    /**
-     *  Events defined here.
-     */
-    event AirlineAdded(address airlineAddress);
-    event AirlineRegistered(address airlineAddress);
-    event flightRegistered(bytes32 flightKey);
-    event flightTicketsAdded(uint[] ticketsNumbers, bytes32 flightKey);
-    event oracleRegistered(address oracleaddress, bool isRegistered);
-
+ 
     /********************************************************************************************/
     /*                                       FUNCTION MODIFIERS                                 */
     /********************************************************************************************/
@@ -67,7 +50,7 @@ contract FlightSuretyApp {
     modifier requireIsOperational() 
     {
          // Modify to call data contract's status
-        require(operational, "Contract is currently not operational");
+        require(true, "Contract is currently not operational");  
         _;  // All modifiers require an "_" which indicates where the function body will be added
     }
 
@@ -80,23 +63,6 @@ contract FlightSuretyApp {
         _;
     }
 
-    modifier requireAirline(address airlineAddress)
-    {
-        require(dataContract.airlineExists(airlineAddress), "Airline does not exist in requireIsAirLine");
-        _;
-    }
-
-    modifier requireAirlineRegistered(address airlineAddress)
-    {
-        require(dataContract.airlineRegistered(airlineAddress), "Airline is not registered in requireIsRegisteredAirLine");
-        _;
-    }
-
-    modifier requireAirlineFunded(address airlineAddress)
-    {
-        require(dataContract.airlineFunded(airlineAddress), "Airline is not funded in requireIsFundedAirLine");
-        _;
-    }
     /********************************************************************************************/
     /*                                       CONSTRUCTOR                                        */
     /********************************************************************************************/
@@ -105,11 +71,12 @@ contract FlightSuretyApp {
     * @dev Contract constructor
     *
     */
-    constructor(
-    address flightSuretyDataContractAddress) public 
+    constructor
+                                (
+                                ) 
+                                public 
     {
         contractOwner = msg.sender;
-        dataContract = FlightSuretyData(flightSuretyDataContractAddress);
     }
 
     /********************************************************************************************/
@@ -121,16 +88,7 @@ contract FlightSuretyApp {
                             pure 
                             returns(bool) 
     {
-        return operational;  // Modify to call data contract's status
-    }
-
-    /**
-    * Function to change the turn on/off the app contract. 
-    */
-    function setOperational(
-        bool operational
-        ) public requireContractOwner{
-        this.operational = operational;
+        return true;  // Modify to call data contract's status
     }
 
     /********************************************************************************************/
@@ -143,65 +101,33 @@ contract FlightSuretyApp {
     *
     */   
     function registerAirline
-                            (
-                            address airlineAddress
+                            (   
                             )
-                            public
-                            requireIsOperational
-                            requireAirlineFunded(msg.sender)
+                            external
+                            pure
+                            returns(bool success, uint256 votes)
     {
-        // probably needs a multi-party consensus here? 
-        if ( dataContract.getRegisteredAirlinesCount() >= MinimumAirlinesCount){
-            dataContract.registerAirline(airlineAddress, false);
-            emit AirlineAdded(airlineAddress);
-        }
-        else{
-            dataContract.registerAirline(airlineAddress, true);
-            emit AirlineRegistered(airlineAddress);
-        }
+        return (success, 0);
     }
 
 
    /**
     * @dev Register a future flight for insuring.
     *
-    */
+    */  
     function registerFlight
                                 (
-                                    uint256 departureTime,
-                                    uint256[] memory ticketNumbers,
-                                    string memory flightName
                                 )
-                                public
-                                requireAirlineFunded(msg.sender)
-                                requireIsOperational
-
+                                external
+                                pure
     {
-        bytes32 flightKey = getFlightKey(msg.sender, flightName, departureTime);
-        require(!flights[flightKey].isRegistered, "Flight is not registered");
-        flights[flightKey] = Flight ({
-            isRegistered: true,
-            name: flightName,
-            departure: departureTime,
-            statusCode: 0,
-            updatedTimestamp: now,
-            airline: msg.sender
-            });
 
-        dataContract.addFlightKeyToAirline(msg.sender, flightKey);
-
-        for (uint i = 0; i < ticketNumbers.length; i++) {
-            dataContract.buildFlightInsurance(msg.sender, flightKey, ticketNumbers[i]);
-        }
-
-        emit flightRegistered(flightKey);
-        emit flightTicketsAdded(ticketNumbers, flightKey);
     }
     
    /**
     * @dev Called after oracle has updated flight status
     *
-    */
+    */  
     function processFlightStatus
                                 (
                                     address airline,
@@ -210,14 +136,8 @@ contract FlightSuretyApp {
                                     uint8 statusCode
                                 )
                                 internal
+                                pure
     {
-        bytes32 flightKey = getFlightKey(airline, flight, timestamp);
-        flights[flightKey].statusCode = statusCode;
-        if (statusCode == STATUS_CODE_LATE_AIRLINE ){
-            dataContract.creditInsurees(flightKey, CREDIT_RATE);
-        } else {
-            dataContract.creditInsurees(flightKey, 0);
-        }
     }
 
 
@@ -225,8 +145,8 @@ contract FlightSuretyApp {
     function fetchFlightStatus
                         (
                             address airline,
-                            string calldata flight,
-                            uint256 timestamp
+                            string flight,
+                            uint256 timestamp                            
                         )
                         external
     {
@@ -240,7 +160,7 @@ contract FlightSuretyApp {
                                             });
 
         emit OracleRequest(index, airline, flight, timestamp);
-    }
+    } 
 
 
 // region ORACLE MANAGEMENT
@@ -249,7 +169,7 @@ contract FlightSuretyApp {
     uint8 private nonce = 0;    
 
     // Fee to be paid when registering oracle
-    uint256 public constant REGISTRATION_FEE = 10 ether;
+    uint256 public constant REGISTRATION_FEE = 1 ether;
 
     // Number of oracles that must respond for valid status
     uint256 private constant MIN_RESPONSES = 3;
@@ -303,15 +223,17 @@ contract FlightSuretyApp {
                                         isRegistered: true,
                                         indexes: indexes
                                     });
-        emit oracleRegistered(msg.sender, oracles[msg.sender].isRegistered);
     }
 
-    function getMyIndexes()
-    public
-    view
-    returns(uint8[3] memory indexes)
+    function getMyIndexes
+                            (
+                            )
+                            view
+                            external
+                            returns(uint8[3])
     {
         require(oracles[msg.sender].isRegistered, "Not registered as an oracle");
+
         return oracles[msg.sender].indexes;
     }
 
@@ -326,17 +248,16 @@ contract FlightSuretyApp {
                         (
                             uint8 index,
                             address airline,
-                            string memory flight,
+                            string flight,
                             uint256 timestamp,
                             uint8 statusCode
                         )
-                        public
+                        external
     {
-        require((oracles[msg.sender].indexes[0] == index) ||
-                (oracles[msg.sender].indexes[1] == index) ||
-                (oracles[msg.sender].indexes[2] == index), "Index does not match oracle request");
+        require((oracles[msg.sender].indexes[0] == index) || (oracles[msg.sender].indexes[1] == index) || (oracles[msg.sender].indexes[2] == index), "Index does not match oracle request");
 
-        bytes32 key = keccak256(abi.encodePacked(index, airline, flight, timestamp));
+
+        bytes32 key = keccak256(abi.encodePacked(index, airline, flight, timestamp)); 
         require(oracleResponses[key].isOpen, "Flight or timestamp do not match oracle request");
 
         oracleResponses[key].responses[statusCode].push(msg.sender);
@@ -345,7 +266,7 @@ contract FlightSuretyApp {
         // oracles respond with the *** same *** information
         emit OracleReport(airline, flight, timestamp, statusCode);
         if (oracleResponses[key].responses[statusCode].length >= MIN_RESPONSES) {
-            oracleResponses[key].isOpen = false;
+
             emit FlightStatusInfo(airline, flight, timestamp, statusCode);
 
             // Handle flight status as appropriate
@@ -357,27 +278,27 @@ contract FlightSuretyApp {
     function getFlightKey
                         (
                             address airline,
-                            string memory flight,
+                            string flight,
                             uint256 timestamp
                         )
                         pure
                         internal
-                        returns(bytes32)
+                        returns(bytes32) 
     {
         return keccak256(abi.encodePacked(airline, flight, timestamp));
     }
 
     // Returns array of three non-duplicating integers from 0-9
     function generateIndexes
-                            (
-                                address account
+                            (                       
+                                address account         
                             )
                             internal
-                            returns(uint8[3] memory)
+                            returns(uint8[3])
     {
         uint8[3] memory indexes;
         indexes[0] = getRandomIndex(account);
-
+        
         indexes[1] = indexes[0];
         while(indexes[1] == indexes[0]) {
             indexes[1] = getRandomIndex(account);
@@ -413,4 +334,4 @@ contract FlightSuretyApp {
 
 // endregion
 
-}
+}   
