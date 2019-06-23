@@ -72,6 +72,7 @@ contract FlightSuretyData {
     event InsuranceBought(address airline, string flight, uint256 timestamp, address passenger, uint amount, uint256 multiplier);
     event InsureeCredited(address passenger, uint amount);
     event AccountWithdrawn(address passenger, uint amount);
+    event FlightStatusUpdated(address airline, string flight, uint256 timestamp, uint8 statusCode);
 
     /**
     * @dev Constructor
@@ -167,6 +168,9 @@ contract FlightSuretyData {
         operational = mode;
     }
 
+    function getRegisteredAirlinesCount() external view returns(uint) {
+        return registeredAirlines.length;
+    }
     /********************************************************************************************/
     /*                                     SMART CONTRACT FUNCTIONS                             */
     /********************************************************************************************/
@@ -177,8 +181,9 @@ contract FlightSuretyData {
     *
     */
     function registerAirline(string memory airlineName, address airlineAddress)
-    public requireIsOperational requireIsCallerAuthorized
+    public requireIsOperational requireIsCallerAuthorized returns(bool success)
     {
+        bool result = true;
         require(!airlines[airlineAddress].isRegistered, "Airline has already been registered");
         airlines[airlineAddress] = Airline({
           name: airlineName,
@@ -190,6 +195,7 @@ contract FlightSuretyData {
 
         registeredAirlines.push(airlineAddress);
         emit AirlineRegistered(airlineName, airlineAddress);
+        return result;
     }
 
     function fundAirline(address addr) external requireIsOperational requireIsCallerAuthorized {
@@ -200,7 +206,7 @@ contract FlightSuretyData {
     /**
      * @dev Register a flight
      */
-    function registerFlight(address airline, string calldata name, uint256 timestamp) external
+    function registerFlight(address airline, string name, uint256 timestamp) external
     requireIsOperational requireIsCallerAuthorized requireAirlineIsFunded(airline) {
      bytes32 flightKey = getFlightKey(airline, name, timestamp);
      require(!flights[flightKey].isRegistered, "Flight has already been registered");
@@ -216,14 +222,15 @@ contract FlightSuretyData {
     registeredFlights.push(flightKey);
 
     emit FlightRegistered(flightKey, airline, name, timestamp);
-  }
+   }
+
    /**
     * @dev Buy insurance for a flight
     *
     */
     function buy
                             (
-                                address airline, string calldata flight, uint256 timestamp,
+                                address airline, string flight, uint256 timestamp,
                                 address passenger, uint256 amount, uint256 multiplier
                             )
                             external requireIsOperational requireIsCallerAuthorized
@@ -245,12 +252,8 @@ contract FlightSuretyData {
     /**
      *  @dev Credits payouts to insurees
     */
-    function creditInsurees
-                                (
-                                    address airline, string calldata flight, uint256 timestamp
-                                )
-                                external
-                                pure
+    function creditInsurees(address airline, string memory flight, uint256 timestamp)
+    internal requireIsOperational requireIsCallerAuthorized
     {
             bytes32 flightKey = getFlightKey(airline, flight, timestamp);
 
@@ -264,6 +267,25 @@ contract FlightSuretyData {
                 emit InsureeCredited(insurance.passenger, amount);
             }
         }
+    }
+
+    /**
+    * @dev Process flights
+    */
+    function processFlightStatus(address airline, string flight, uint256 timestamp, uint8 statusCode)
+    external requireIsOperational requireIsCallerAuthorized {
+        //require(!this.isLandedFlight(airline, flight, timestamp), "Flight already landed");
+
+        bytes32 flightKey = getFlightKey(airline, flight, timestamp);
+
+        if (flights[flightKey].statusCode == STATUS_CODE_UNKNOWN) {
+        flights[flightKey].statusCode = statusCode;
+            if(statusCode == STATUS_CODE_LATE_AIRLINE) {
+                creditInsurees(airline, flight, timestamp);
+            }
+        }
+
+        emit FlightStatusUpdated(airline, flight, timestamp, statusCode);
     }
 
     /**
