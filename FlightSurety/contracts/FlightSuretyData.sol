@@ -171,6 +171,20 @@ contract FlightSuretyData {
     function getRegisteredAirlinesCount() external view returns(uint) {
         return registeredAirlines.length;
     }
+
+    /**
+    * @dev Adds address to authorized contracts
+    */
+    function authorizeCaller(address contractAddress) external requireContractOwner {
+        authorizedContracts[contractAddress] = 1;
+    }
+
+    /**
+    * @dev Removes address from authorized contracts
+    */
+    function deauthorizeCaller(address contractAddress) external requireContractOwner {
+        delete authorizedContracts[contractAddress];
+    }
     /********************************************************************************************/
     /*                                     SMART CONTRACT FUNCTIONS                             */
     /********************************************************************************************/

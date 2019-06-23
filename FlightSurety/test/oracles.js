@@ -16,20 +16,20 @@ contract('Oracles', async (accounts) => {
     const STATUS_CODE_LATE_WEATHER = 30;
     const STATUS_CODE_LATE_TECHNICAL = 40;
     const STATUS_CODE_LATE_OTHER = 50;
-
   });
-
 
   it('can register oracles', async () => {
     
     // ARRANGE
     let fee = await config.flightSuretyApp.REGISTRATION_FEE.call();
 
+    let operational = await config.flightSuretyApp.isOperational.call();
+    console.log("is it operational: ", operational);
+
     // ACT
     for(let a=1; a<TEST_ORACLES_COUNT; a++) {      
       await config.flightSuretyApp.registerOracle({ from: accounts[a], value: fee });
       let result = await config.flightSuretyApp.getMyIndexes.call({from: accounts[a]});
-      console.log(`Oracle Registered: ${result[0]}, ${result[1]}, ${result[2]}`);
     }
   });
 
@@ -40,7 +40,7 @@ contract('Oracles', async (accounts) => {
     let timestamp = Math.floor(Date.now() / 1000);
 
     // Submit a request for oracles to get status information for a flight
-    await config.flightSuretyApp.fetchFlightStatus(config.firstAirline, flight, timestamp);
+    await config.flightSuretyApp.fetchFlightStatus(config.firstAirlineAddress, flight, timestamp);
     // ACT
 
     // Since the Index assigned to each test account is opaque by design
