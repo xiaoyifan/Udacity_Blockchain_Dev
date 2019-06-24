@@ -20241,10 +20241,16 @@
       "links": {},
       "address": "0x037eebA3f62373cAa36B190632017F2498aDc107",
       "transactionHash": "0xe32c1a43d80db4a615162b0aa5e8e670c632352ffbce5f598ef4f1178e2d9e95"
+    },
+    "1561357892211": {
+      "events": {},
+      "links": {},
+      "address": "0xcEBd63a365a08b802CBC870584AE10EF193a22da",
+      "transactionHash": "0x6d2ee1af5ce7cbe4de8f82353350935132b4b34486a428c30df7a449e9764eb9"
     }
   },
   "schemaVersion": "3.0.1",
-  "updatedAt": "2019-06-24T06:09:01.823Z",
+  "updatedAt": "2019-06-24T06:36:27.909Z",
   "devdoc": {
     "methods": {
       "buy(address,string,uint256,address,uint256,uint256)": {

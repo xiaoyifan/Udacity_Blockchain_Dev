@@ -34,7 +34,7 @@ import './flightsurety.css';
             // Write transaction
             contract.registerAirline(airlineName,airlineAddress,(error,result) => {
 				console.log("inside register",result);
-               display('register', 'Register Airlines', [ { label: 'Fetch reguster status Status', error: error, value: result} ]);
+               display('register', 'Register Airlines', [ { label: 'Fetch register status', error: error, value: result} ]);
             });
         })
 		
@@ -45,7 +45,7 @@ import './flightsurety.css';
             // Write transaction
             contract.fund(airlineAddress,(error,result) => {
 				console.log("inside fund",result);
-              display('fund', 'Fund Airlines', [ { label: 'Fetch reguster status Status', error: error, value: result} ]);
+              display('fund', 'Fund Airlines', [ { label: 'Fetch funding status', error: error, value: result} ]);
             });
         })
 		

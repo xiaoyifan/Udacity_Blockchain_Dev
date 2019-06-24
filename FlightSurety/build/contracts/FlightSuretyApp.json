@@ -29109,10 +29109,16 @@
       "links": {},
       "address": "0xCFb2466cC4677de2F598571867fC288c1fbf8914",
       "transactionHash": "0xaa477a74ae1a546bbb8da114d3b11a1391512d277f59538b2fa4ac6dd5bbc4c6"
+    },
+    "1561357892211": {
+      "events": {},
+      "links": {},
+      "address": "0x3B4fda5D10D6dA7C621e04f0D538fD7536D797c6",
+      "transactionHash": "0xafb25fe0f9b0b7d0ba73d6db87affb163c8d67d65a902bd0915e868889aa6c2e"
     }
   },
   "schemaVersion": "3.0.1",
-  "updatedAt": "2019-06-24T06:09:01.845Z",
+  "updatedAt": "2019-06-24T06:36:27.931Z",
   "devdoc": {
     "methods": {
       "buyInsurance(address,string,uint256)": {
