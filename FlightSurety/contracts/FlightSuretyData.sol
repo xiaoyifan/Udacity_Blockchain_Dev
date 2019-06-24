@@ -17,7 +17,6 @@ contract FlightSuretyData {
         bool isFunded;
         string name;
         bytes32[] flightKeys;
-        Votes votes;
     }
 
     mapping(address => Airline) private airlines;
@@ -36,10 +35,10 @@ contract FlightSuretyData {
     mapping(bytes32 => Flight) private flights;
     bytes32[] registeredFlights = new bytes32[](0);
 
-    struct Votes{
-        uint votersCount;
-        mapping(address => bool) voters;
-    }
+    // struct Votes{
+    //     uint votersCount;
+    //     mapping(address => bool) voters;
+    // }
 
     struct Insurance {
         address passenger;
@@ -86,10 +85,8 @@ contract FlightSuretyData {
       name: firstAirlineName,
       isFunded: false,
       isRegistered: true,
-      flightKeys: new bytes32[](0),
-      votes: Votes(0)
+      flightKeys: new bytes32[](0)
     });
-
     registeredAirlines.push(firstAirlineAddress);
   }
 
@@ -132,7 +129,7 @@ contract FlightSuretyData {
     * @dev Modifier that requires airline to be funded
     */
     modifier requireAirlineIsFunded(address airline) {
-     require(airlines[airline].isFunded, "Only existing and funded airlines are allowed");
+     require(airlines[airline].isFunded, "Only existing and funded airlines are allowed(data)");
      _;
     }
     /********************************************************************************************/
@@ -152,12 +149,6 @@ contract FlightSuretyData {
         return operational;
     }
 
-
-    /**
-    * @dev Sets contract operations on/off
-    *
-    * When operational mode is disabled, all write transactions except for this one will fail
-    */
     function setOperatingStatus
                             (
                                 bool mode
@@ -172,19 +163,30 @@ contract FlightSuretyData {
         return registeredAirlines.length;
     }
 
-    /**
-    * @dev Adds address to authorized contracts
-    */
+    function getAirlineName(address airline) external view returns(string memory) {
+        return airlines[airline].name;
+    }
+
+    function isAirline(address airline) external view returns(bool) {
+        return airlines[airline].isRegistered;
+    }
+
+    function isFundedAirline(address airline) external view returns(bool) {
+        return airlines[airline].isFunded;
+    }
+
+    function getRegisteredAirlines() external view returns(address[] memory) {
+        return registeredAirlines;
+    }
+
     function authorizeCaller(address contractAddress) external requireContractOwner {
         authorizedContracts[contractAddress] = 1;
     }
 
-    /**
-    * @dev Removes address from authorized contracts
-    */
     function deauthorizeCaller(address contractAddress) external requireContractOwner {
         delete authorizedContracts[contractAddress];
     }
+
     /********************************************************************************************/
     /*                                     SMART CONTRACT FUNCTIONS                             */
     /********************************************************************************************/
@@ -194,20 +196,20 @@ contract FlightSuretyData {
     *      Can only be called from FlightSuretyApp contract
     *
     */
-    function registerAirline(string memory airlineName, address airlineAddress)
-    public requireIsOperational requireIsCallerAuthorized returns(bool success)
+    function registerAirline(string memory airlineName, address airlineAddress) public 
+    requireIsOperational requireIsCallerAuthorized 
+    returns(bool success)
     {
         bool result = true;
-        require(!airlines[airlineAddress].isRegistered, "Airline has already been registered");
+        require(airlines[airlineAddress].isRegistered == false, "Airline has already been registered");
         airlines[airlineAddress] = Airline({
           name: airlineName,
           isFunded: false,
           isRegistered: true,
-          flightKeys: new bytes32[](0),
-          votes: Votes(0)
+          flightKeys: new bytes32[](0)
         });
 
-        registeredAirlines.push(airlineAddress);
+        // registeredAirlines.push(airlineAddress);
         emit AirlineRegistered(airlineName, airlineAddress);
         return result;
     }
@@ -323,8 +325,9 @@ contract FlightSuretyData {
     *      resulting in insurance payouts, the contract should be self-sustaining
     *
     */
-    function fund() public payable
+    function fund(address _sender) public payable
     {
+        airlines[_sender].isFunded = true;
     }
 
     function getFlightKey(address airline, string memory flight, uint256 timestamp) internal pure returns(bytes32)
@@ -338,7 +341,7 @@ contract FlightSuretyData {
     */
     function() external payable
     {
-        fund();
+       // fund();
     }
 
 

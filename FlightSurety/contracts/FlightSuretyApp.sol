@@ -108,7 +108,7 @@ contract FlightSuretyApp {
      * @dev Modifier that requires airline to be funded
      */
     modifier requireAirlineIsFunded(address airline) {
-        require(dataContract.isFundedAirline(airline), "Only existing and funded airlines are allowed");
+        require(dataContract.isFundedAirline(airline), "Only existing and funded airlines are allowed(App)");
         _;
     }
 
@@ -145,6 +145,8 @@ contract FlightSuretyApp {
     // they fetch data and submit a response
     event OracleRequest(uint8 index, address airline, string flight, uint256 timestamp);
 
+    event RegisteredCount(uint getRegisteredAirlinesCount);
+
     /********************************************************************************************/
     /*                                       UTILITY FUNCTIONS                                  */
     /********************************************************************************************/
@@ -158,6 +160,10 @@ contract FlightSuretyApp {
         require(mode != operational, "New mode must be different from existing mode");
         operational = mode;
     }
+
+    function getRegisteredAirlines() external view returns(address[] memory){
+      return dataContract.getRegisteredAirlines();
+    }
     /********************************************************************************************/
     /*                                     SMART CONTRACT FUNCTIONS                             */
     /********************************************************************************************/
@@ -168,15 +174,15 @@ contract FlightSuretyApp {
     *
     */
     function registerAirline
-    (string memory name, address addr)
-    public requireIsOperational requireAirlineIsFunded(msg.sender)
+    (string memory name, address addr) public
+     requireIsOperational requireAirlineIsFunded(msg.sender)
                             returns(bool success, uint256 votes)
     {
         bool result = false;
         uint registeredAirlinesCount = dataContract.getRegisteredAirlinesCount();
 
         if(registeredAirlinesCount < REGISTER_AIRLINE_MULTI_CALL_THRESHOLD) {
-            result = dataContract.registerAirline(name, addr);
+          result = dataContract.registerAirline(name, addr);
         }
         else {
             bool isDuplicate = false;
@@ -326,7 +332,7 @@ contract FlightSuretyApp {
     oracles[msg.sender] = Oracle({isRegistered: true, indexes: indexes});
   }
 
-  function getMyIndexes() view external requireIsOperational returns(uint8[3] memory) {
+  function getMyIndexes() external view requireIsOperational returns(uint8[3] memory) {
     require(oracles[msg.sender].isRegistered, "Not registered as an oracle");
     return oracles[msg.sender].indexes;
   }
