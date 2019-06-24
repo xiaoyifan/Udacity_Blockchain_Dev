@@ -73,10 +73,6 @@ export default class Contract {
 			console.log(error,result);
 			callback(error,result);
             });
-
-        self.flightSuretyApp.methods.getRegisteredAirlines().send({ from:self.owner}, (error, result) => {
-            console.log("Registered Airlines Count: ", result);
-        });
     }
 	
 	fund(airlineAddress,callback) {

@@ -175,8 +175,7 @@ contract FlightSuretyApp {
     */
     function registerAirline
     (string memory name, address addr) public
-     requireIsOperational requireAirlineIsFunded(msg.sender)
-                            returns(bool success, uint256 votes)
+     requireIsOperational returns(bool success, uint256 votes)
     {
         bool result = false;
         uint registeredAirlinesCount = dataContract.getRegisteredAirlinesCount();

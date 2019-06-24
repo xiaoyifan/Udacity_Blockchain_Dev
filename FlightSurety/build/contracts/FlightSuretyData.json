@@ -20245,12 +20245,12 @@
     "1561357892211": {
       "events": {},
       "links": {},
-      "address": "0xcEBd63a365a08b802CBC870584AE10EF193a22da",
-      "transactionHash": "0x6d2ee1af5ce7cbe4de8f82353350935132b4b34486a428c30df7a449e9764eb9"
+      "address": "0x824C153506038027c24C7a7b187533e63Bd31cB7",
+      "transactionHash": "0xf09837e6aebe825eedfbce50a918adda62f9cd1610c29915e28d254c8911a2bf"
     }
   },
   "schemaVersion": "3.0.1",
-  "updatedAt": "2019-06-24T06:36:27.909Z",
+  "updatedAt": "2019-06-24T07:02:17.603Z",
   "devdoc": {
     "methods": {
       "buy(address,string,uint256,address,uint256,uint256)": {

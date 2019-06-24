@@ -29113,12 +29113,12 @@
     "1561357892211": {
       "events": {},
       "links": {},
-      "address": "0x3B4fda5D10D6dA7C621e04f0D538fD7536D797c6",
-      "transactionHash": "0xafb25fe0f9b0b7d0ba73d6db87affb163c8d67d65a902bd0915e868889aa6c2e"
+      "address": "0x94946D89f7435BC6A5d2ed9AEf9B2785e326311b",
+      "transactionHash": "0x008b657355f9f564f1b9233f5597fb9bc9afb2a72b9e2c483f26068f1fb1b408"
     }
   },
   "schemaVersion": "3.0.1",
-  "updatedAt": "2019-06-24T06:36:27.931Z",
+  "updatedAt": "2019-06-24T07:02:17.621Z",
   "devdoc": {
     "methods": {
       "buyInsurance(address,string,uint256)": {
