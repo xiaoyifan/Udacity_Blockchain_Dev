@@ -130,6 +130,19 @@ contract('Flight Surety Tests', async (accounts) => {
 
       assert.equal(reverted, true, "Airline cannot be funded with less than 10 ether");
     });
+    
+    it('(airline) register an airline once', async () => {
+      let reverted = false;
+      try {
+        await config.flightSuretyApp.registerAirline("Cebu Pacific Air", airline2, {from: config.firstAirlineAddress});
+      }
+      catch(e) {
+        //console.log(e);
+        reverted = true;
+      }
+
+      assert.equal(reverted, false, "Airline registered");
+    });
 
     it('(airline) cannot register an airline more than once', async () => {
       let reverted = false;

@@ -1,4 +1,4 @@
-pragma solidity >=0.4.25;
+pragma solidity >=0.4.24;
 
 // It's important to avoid vulnerabilities due to numeric overflow bugs
 // OpenZeppelin's SafeMath library, when used correctly, protects agains such bugs
@@ -164,6 +164,10 @@ contract FlightSuretyApp {
     function getRegisteredAirlines() external view returns(address[] memory){
       return dataContract.getRegisteredAirlines();
     }
+    
+    function getRegisterAirlineMultiCalls(address airlineAddress) external view returns(address[] memory){
+        return registerAirlineMultiCalls[airlineAddress];
+    }
     /********************************************************************************************/
     /*                                     SMART CONTRACT FUNCTIONS                             */
     /********************************************************************************************/
@@ -225,7 +229,7 @@ contract FlightSuretyApp {
     * @dev Register a future flight for insuring.
     *
     */
-    function registerFlight(string flightName, uint256 departureTime) external requireIsOperational requireAirlineIsFunded(msg.sender) {
+    function registerFlight(string calldata flightName, uint256 departureTime) external requireIsOperational requireAirlineIsFunded(msg.sender) {
         dataContract.registerFlight(msg.sender, flightName, departureTime);
         emit FlightRegistered(msg.sender, flightName, departureTime);
     }
@@ -250,10 +254,10 @@ contract FlightSuretyApp {
     function fetchFlightStatus
                         (
                             address airline,
-                            string flight,
+                            string calldata flight,
                             uint256 timestamp
                         )
-                        external
+                        external returns(bytes32, bool)
     {
         uint8 index = getRandomIndex(msg.sender);
 
@@ -265,12 +269,13 @@ contract FlightSuretyApp {
                                             });
 
         emit OracleRequest(index, airline, flight, timestamp);
+        return (key, oracleResponses[key].isOpen);
     }
 
     /**
     * @dev Buy insurance for a flight
     */
-    function buyInsurance(address airline, string flight, uint256 timestamp) external payable requireIsOperational {
+    function buyInsurance(address airline, string calldata flight, uint256 timestamp) external payable requireIsOperational {
         require(msg.value > 0 && msg.value <= MAX_PASSENGER_INSURANCE_VALUE, "Insurance value is not within the limits");
         require(dataContract.isFlight(airline, flight, timestamp), "Flight is not registered");
         require(!dataContract.isLandedFlight(airline, flight, timestamp), "Flight already landed");
@@ -340,10 +345,14 @@ contract FlightSuretyApp {
   // For the response to be accepted, there must be a pending request that is open
   // and matches one of the three Indexes randomly assigned to the oracle at the
   // time of registration (i.e. uninvited oracles are not welcome)
-  function submitOracleResponse(uint8 index, address airline, string flight, uint256 timestamp, uint8 statusCode) external requireIsOperational {
-    require((oracles[msg.sender].indexes[0] == index) || (oracles[msg.sender].indexes[1] == index) || (oracles[msg.sender].indexes[2] == index), "Index does not match oracle request");
+  function submitOracleResponse(uint8 index, address airline,
+                                string calldata flight, uint256 timestamp, uint8 statusCode)
+  external requireIsOperational {
+    require((oracles[msg.sender].indexes[0] == index) ||
+            (oracles[msg.sender].indexes[1] == index) ||
+            (oracles[msg.sender].indexes[2] == index), "Index does not match oracle request");
 
-    bytes32 key = keccak256(abi.encodePacked(index, airline, flight, timestamp)); 
+    bytes32 key = keccak256(abi.encodePacked(index, airline, flight, timestamp));
     require(oracleResponses[key].isOpen, "Flight or timestamp do not match oracle request");
 
     oracleResponses[key].responses[statusCode].push(msg.sender);
@@ -359,7 +368,7 @@ contract FlightSuretyApp {
     }
   }
 
-  function getFlightKey(address airline, string memory flight, uint256 timestamp) pure internal returns(bytes32) {
+  function getFlightKey(address airline, string memory flight, uint256 timestamp) internal pure returns(bytes32) {
     return keccak256(abi.encodePacked(airline, flight, timestamp));
   }
 
@@ -406,7 +415,7 @@ contract FlightSuretyData {
   function setOperatingStatus(bool mode) external;
 
   // Airlines
-  function registerAirline(string name, address addr) external returns(bool);
+  function registerAirline(string calldata name, address addr) external returns(bool);
   function isAirline(address airline) external view returns(bool);
   function isFundedAirline(address airline) external view returns(bool);
   function getRegisteredAirlines() external view returns(address[] memory);
@@ -414,15 +423,15 @@ contract FlightSuretyData {
   function getRegisteredAirlinesCount() external view returns(uint);
 
   // Flights
-  function registerFlight(address airline, string flight, uint256 timestamp) external;
-  function isFlight(address airline, string flight, uint256 timestamp) external view returns(bool);
-  function isLandedFlight(address airline, string flight, uint256 timestamp) external view returns(bool);
-  function processFlightStatus(address airline, string flight, uint256 timestamp, uint8 statusCode) external;
-  function getFlightStatusCode(address airline, string flight, uint256 timestamp) external view returns(uint8);
+  function registerFlight(address airline, string calldata flight, uint256 timestamp) external;
+  function isFlight(address airline, string calldata flight, uint256 timestamp) external view returns(bool);
+  function isLandedFlight(address airline, string calldata flight, uint256 timestamp) external view returns(bool);
+  function processFlightStatus(address airline, string calldata flight, uint256 timestamp, uint8 statusCode) external;
+  function getFlightStatusCode(address airline, string calldata flight, uint256 timestamp) external view returns(uint8);
 
   // Passengers
-  function buy(address airline, string flight, uint256 timestamp,
+  function buy(address airline, string calldata flight, uint256 timestamp,
                address passenger, uint256 amount, uint256 multiplier) external payable;
-  function isInsured(address passenger, address airline, string flight, uint256 timestamp) external view returns (bool);
+  function isInsured(address passenger, address airline, string calldata flight, uint256 timestamp) external view returns (bool);
   function pay(address passenger) external;
 }

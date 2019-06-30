@@ -23,13 +23,10 @@ export default class Contract {
 
             let counter = 1;
             
-            while(this.airlines.length < 5) {
-                this.airlines.push(accts[counter++]);
-            }
-
-            while(this.passengers.length < 5) {
-                this.passengers.push(accts[counter++]);
-            }
+            //During init phase, authorize app contract to call data contract.
+            self.flightSuretyData.methods.authorizeCaller(config.addAddress).send({ from: self.owner}, (error, result) => {
+                callback(error, payload);
+            });
 
             callback();
         });
@@ -52,6 +49,7 @@ export default class Contract {
         self.flightSuretyApp.methods
             .fetchFlightStatus(payload.airline, payload.flight, payload.timestamp)
             .send({ from: self.owner}, (error, result) => {
+                console.log("fetchFlightStatus result: ", result);
                 callback(error, payload);
             });
     }
@@ -59,7 +57,7 @@ export default class Contract {
 
     registerAirline(airlineName, airlineAddress,callback) {
         let self = this;
-       
+        this.web3.eth.getBalance(airlineAddress).then(function(receipt){ console.log("balance before=",receipt); });
         self.flightSuretyApp.methods
             .registerAirline(airlineName, airlineAddress)
             .send({ from:self.owner}, (error, result) => {
@@ -71,7 +69,8 @@ export default class Contract {
             console.log("error: ", error);
             console.log("result: ", result);
 			console.log(error,result);
-			callback(error,result);
+            callback(error,result);
+            this.web3.eth.getBalance(airlineAddress).then(function(receipt){ console.log("balance after=",receipt); });
             });
     }
 	
