@@ -34,10 +34,21 @@ import './flightsurety.css';
             // Write transaction
             contract.registerAirline(airlineName,airlineAddress,(error,result) => {
 				console.log("inside register",result);
-               display('register', 'Register Airlines', [ { label: 'Fetch register status', error: error, value: result} ]);
+               display('Register', 'Register Airlines', [ { label: 'Fetch register status', error: error, value: result} ]);
             });
         })
-		
+        
+		DOM.elid('register-flight').addEventListener('click', () => {
+            let flightName = DOM.elid('flight-id').value;
+			let flightTime = DOM.elid('flight-time').value;
+			console.log("before register flight. ");
+            // Write transaction
+            contract.registerFlight(flightName,flightTime,(error,result) => {
+				console.log("inside register: ",result);
+               display('Register', 'Register Flights', [ { label: 'Fetch register status', error: error, value: result} ]);
+            });
+        })
+
 		// transaction for funding of airline
 		DOM.elid('fund-airline').addEventListener('click', () => {
  			let airlineAddress = DOM.elid('funded-airline').value;
@@ -45,27 +56,20 @@ import './flightsurety.css';
             // Write transaction
             contract.fund(airlineAddress,(error,result) => {
 				console.log("inside fund",result);
-              display('fund', 'Fund Airlines', [ { label: 'Fetch funding status', error: error, value: result} ]);
+              display('Fund', 'Fund Airlines', [ { label: 'Fetch funding status', error: error, value: result} ]);
             });
         })
 		
 		// transaction for purchasing of insurance
 		DOM.elid('purchase-insurance').addEventListener('click', () => {
-			
-		let passengerAddress = DOM.elid('passenger-address-buy').value;
-
- 		//	let flightId = DOM.elid('FlightId');
-		var e = document.getElementById("FlightId");
-			var flightId = e.options[e.selectedIndex].text;
-			console.log("Selected Flight Id=",flightId);
-			
-		var f = document.getElementById("FlightTime");
-			var flightTime = f.options[f.selectedIndex].text;
-			console.log("Selected Flight Time=",flightTime);
-			
-				console.log("Passenger address=",passengerAddress);
+        
+        let airlineAddress = DOM.elid('airline').value;
+        let passengerAddress = DOM.elid('passenger').value;
+        let flightName = DOM.elid('flight-id').value;
+        let flightTime = DOM.elid('flight-time').value;
+		console.log("Passenger address=",passengerAddress);
             // Write transaction
-           contract.buy(flightId,flightTime,passengerAddress,(error,result) => {
+        contract.buyInsurance(airlineAddress, flightName, flightTime, passengerAddress, (error,result) => {
 				console.log("inside fund",passengerAddress);
    
            });

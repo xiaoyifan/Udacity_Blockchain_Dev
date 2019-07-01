@@ -21,39 +21,61 @@
 
     <main class="container">
 
-        <div id="display-wrapper2" class="top-20">
+        <div id="display-wrapper2" class="item">
 		<h3>Register Airline</h3>
         </div>
-        <div class="row top-20">
+        <div class="row item">
 		    <label for="airline-name">Airline Name</label>
              <input type="text" id="airline-name">
 			 <label for="airline-address">Airline Address</label>			 
 			 <input type="text" id="airline-address">  <btn class="btn btn-primary" id="register-airline">Register Airline</btn>
         </div>
 
-        <div id="display-wrapper3" class="top-20">
+        <div id="display-wrapper3" class="item">
 		<h3>Fund Airline</h3>
         </div>
-        <div class="row top-5">
+        <div class="row item">
 		    <label for="funded-airline">Airline Address</label>
             <input type="text" id="funded-airline"> <btn class="btn btn-primary" id="fund-airline">Fund Airline</btn>
         </div>
 
-        <div id="display-wrapper4" class="top-20">
+        <div id="display-wrapper3" class="item">
+            <h3>Register Flight</h3>
+        </div>
+        <div class="row item">
+            <label for="FlightId"> Select Flight ID</label>
+            <select id="flight-id">
+            <option value="1">CA985</option>
+            <option value="2">CS981</option>
+            <option value="3">AM106</option>
+            </select>
+
+            <label for="FlightTime"> Select Flight Time</label>
+            <select id="flight-time">
+            <option value="1">1000</option>
+            <option value="2">1500</option>
+            <option value="3">2000</option>
+            </select>
+            <btn class="btn btn-primary" id="register-flight">Register Flight</btn>
+        </div>
+
+        <div id="display-wrapper4" class="item">
 			<h3>Purchase Insurance</h3>
         </div>
-        <div class="row top-5">
-        <label for="passenger-address-buy">Passenger Address</label> <input type="text" id="passenger-address-buy"> 
-		
-		 <label for="FlightId"> Select Flight ID</label>
-		<select id="FlightId">
+        <div class="row item">
+        <label for="passenger">Passenger Address</label> <input type="text" id="passenger"> 
+        
+        <label for="airline">Airline Address</label> <input type="text" id="airline"> 
+
+		<label for="flight-id"> Select Flight ID</label>
+		<select id="flight-id">
 		<option value="1">CA985</option>
 		<option value="2">CS981</option>
 		<option value="3">AM106</option>
 		</select>
 
-        <label for="FlightTimeStatus"> Select Flight Time</label>
-		<select id="FlightTimeStatus">
+        <label for="flight-time"> Select Flight Time</label>
+		<select id="flight-time">
 		<option value="1">1000</option>
 		<option value="2">1500</option>
 		<option value="3">2000</option>
@@ -62,10 +84,10 @@
 		<btn class="btn btn-primary" id="purchase-insurance">Purchase Insurance</btn>
         </div>
 
-        <div id="display-wrapper5" class="top-20">
+        <div id="display-wrapper5" class="item">
 		<h3>Check Flight Status</h3>
         </div>
-      <div class="row top-5">
+      <div class="row item">
 	   <label for="airline-address-fltstatus">Airline Address</label> <input type="text" id="airline-address-fltstatus"> 
 	  
 	  	 <label for="FlightIdStatus"> Select Flight ID</label>
@@ -82,20 +104,20 @@
 		<option value="3">2000</option>
 		</select>
 	    
-	  <btn class="btn btn-primary" id="submit-oracle">Submit to Oracles</btn>
-        </div>
+	    <btn class="btn btn-primary" id="submit-oracle">Submit to Oracles</btn>
+      </div>
 
         <div id="display-wrapper6" class="top-10">
 		<h3>Claim Insurance</h3>
         </div>
-      <div class="row top-5">
+      <div class="row item">
 	    
 	  <btn class="btn btn-primary" id="claim-insurance">Claim Insurance</btn>
         </div>
 
-        <div id="display-wrapper" class="top-20">
+        <div id="display-wrapper" class="item">
         </div>
-        <div class="row top-20">
+        <div class="row item">
             <label class="form">Flight</label> <input type="text" id="flight-number"> <btn class="btn btn-primary" id="submit-oracle">Submit to Oracles</btn>
         </div>
     </main>
