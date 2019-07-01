@@ -5,53 +5,43 @@ contract('Flight Surety Tests', async (accounts) => {
   var config;
 
   // Constants
-  const AIRLINE_FUNDING_VALUE = web3.utils.toWei("10", "ether");
-  const PASSENGER_INSURANCE_VALUE_1 = web3.utils.toWei("1", "ether");
-  const PASSENGER_INSURANCE_VALUE_2 = web3.utils.toWei("0.5", "ether");
+  const AIRLINE_FUNDING_VALUE = web3.utils.toWei("11", "ether");
+  const PASSENGER_INSURANCE_VALUE = web3.utils.toWei("1", "ether");
   const TIMESTAMP = Math.floor(Date.now() / 1000);
   const STATUS_CODE_LATE_AIRLINE = 20;
   const TEST_ORACLES_COUNT = 20;
   const ORACLES_OFFSET = 20;
 
   // Airlines
-  let airline2 = accounts[2];
-  let airline3 = accounts[3];
-  let airline4 = accounts[4];
-  let airline5 = accounts[5];
+  let airline2 = accounts[1];
+  let airline3 = accounts[2];
+  let airline4 = accounts[3];
+  let airline5 = accounts[4];
 
   // Flights
   let flight1 = {
-    airline: airline2,
-    flight: "5J 814", 
-    from: "SIN",
-    to: "MNL", 
+    airline: airline1,
+    flight: "CA101", 
     timestamp: TIMESTAMP
   }
   let flight2 = {
     airline: airline2,
-    flight: "5J 600", 
-    from: "CEB",
-    to: "DVO", 
+    flight: "CA102", 
     timestamp: TIMESTAMP
   }
   let flight3 = {
     airline: airline3,
-    flight: "PR 2543", 
-    from: "MNL",
-    to: "DGT", 
+    flight: "CA985", 
     timestamp: TIMESTAMP
   }
   let flight4 = {
     airline: airline4,
-    flight: "SQ 345",
-    from: "ZRH",
-    to: "SIN",
+    flight: "CA103",
     timestamp: TIMESTAMP
   }
 
   // Passengers
   let passenger1 = accounts[10];
-  let passenger2 = accounts[11];
 
   before('setup contract', async () => {
     config = await Test.Config(accounts);
@@ -59,14 +49,14 @@ contract('Flight Surety Tests', async (accounts) => {
     await config.flightSuretyData.authorizeCaller(config.flightSuretyApp.address);
   });
 
-  describe('(multiparty) test stop loss functionality', function() {
-    it(`(multiparty) has correct initial isOperational() value`, async function () {
+  describe('multiparty, test stop loss functionality', function() {
+    it(`multiparty, has correct initial isOperational() value`, async function () {
       // Get operating status
       let status = await config.flightSuretyData.isOperational.call();
       assert.equal(status, true, "Incorrect initial operating status value");
     });
 
-    it(`(multiparty) can block access to setOperatingStatus() for non-Contract Owner account`, async function () {
+    it(`multiparty, can block access to setOperatingStatus() for non-Contract Owner account`, async function () {
       // Ensure that access is denied for non-Contract Owner account
       let accessDenied = false;
       try {
@@ -79,7 +69,7 @@ contract('Flight Surety Tests', async (accounts) => {
       assert.equal(accessDenied, true, "Access not restricted to Contract Owner");
     });
 
-    it(`(multiparty) can allow access to setOperatingStatus() for Contract Owner account`, async function () {
+    it(`multiparty, can allow access to setOperatingStatus() for Contract Owner account`, async function () {
       // Ensure that access is allowed for Contract Owner account
       let accessDenied = false;
       try {
@@ -95,7 +85,7 @@ contract('Flight Surety Tests', async (accounts) => {
       await config.flightSuretyData.setOperatingStatus(true);
     });
 
-    it(`(multiparty) can block access to functions using requireIsOperational when operating status is false`, async function () {
+    it(`multiparty, can block access to functions using requireIsOperational when operating status is false`, async function () {
       await config.flightSuretyData.setOperatingStatus(false);
 
       let reverted = false;
@@ -113,10 +103,10 @@ contract('Flight Surety Tests', async (accounts) => {
     });
   });
 
-  describe('(airline) test airline functionality', function() {
+  describe('airline, test airline functionality', function() {
 
     // Airline Ante: Airline can be registered, but does not participate in contract until it submits funding of 10 ether
-    it('(airline) airline needs to be funded with 10 ether', async () => {
+    it('airline, airline needs to be funded with 10 ether', async () => {
       const AIRLINE_FUNDING_VALUE_LOWER = web3.utils.toWei("5", "ether");
 
       let reverted = false;
@@ -131,7 +121,7 @@ contract('Flight Surety Tests', async (accounts) => {
       assert.equal(reverted, true, "Airline cannot be funded with less than 10 ether");
     });
     
-    it('(airline) register an airline once', async () => {
+    it('airline, register an airline once', async () => {
       let reverted = false;
       try {
         await config.flightSuretyApp.registerAirline("Cebu Pacific Air", airline2, {from: config.firstAirlineAddress});
@@ -144,7 +134,7 @@ contract('Flight Surety Tests', async (accounts) => {
       assert.equal(reverted, false, "Airline registered");
     });
 
-    it('(airline) cannot register an airline more than once', async () => {
+    it('airline, cannot register an airline more than once', async () => {
       let reverted = false;
       try {
         await config.flightSuretyApp.registerAirline("Cebu Pacific Air", airline2, {from: config.firstAirlineAddress});
@@ -158,8 +148,8 @@ contract('Flight Surety Tests', async (accounts) => {
     });
   });
 
-  describe('(flight) test flight functionality', function() {
-    it('(flight) cannot register a flight  more than once', async () => {
+  describe('flight, test flight functionality', function() {
+    it('flight, cannot register a flight  more than once', async () => {
       let reverted = false;
       try {
         await config.flightSuretyApp.registerFlight(flight1.flight, flight1.timestamp, {from: flight1.airline});
@@ -172,7 +162,7 @@ contract('Flight Surety Tests', async (accounts) => {
       assert.equal(reverted, true, "Airline cannot register a flight more than once");
     });
 
-    it('(flight) cannot register a flight if the airline is not funded', async () => {
+    it('flight, cannot register a flight if the airline is not funded', async () => {
       let reverted = false;
       try {
         await config.flightSuretyApp.registerFlight(flight3.flight, flight3.timestamp, {from: flight3.airline});
@@ -186,8 +176,8 @@ contract('Flight Surety Tests', async (accounts) => {
     });
   });
 
-  describe('(passenger) test passenger functionality', function() {
-    it('(passenger) cannot buy insurance for non-registered flight', async () => {
+  describe('passenger, test passenger functionality', function() {
+    it('passenger, cannot buy insurance for non-registered flight', async () => {
       let reverted = false;
       try {
         await config.flightSuretyApp.buyInsurance(flight3.airline, flight3.flight, flight3.timestamp, {from: passenger1, value: PASSENGER_INSURANCE_VALUE, gasPrice: 0});
@@ -200,7 +190,7 @@ contract('Flight Surety Tests', async (accounts) => {
       assert.equal(reverted, true, "Flight is not registered");
     });
 
-    it('(passenger) cannot buy insurance without funds', async () => {
+    it('passenger, cannot buy insurance without funds', async () => {
       let reverted = false;
       try {
         await config.flightSuretyApp.buyInsurance(flight2.airline, flight2.flight, flight2.timestamp, {from: passenger1, value: 0, gasPrice: 0});
@@ -213,7 +203,7 @@ contract('Flight Surety Tests', async (accounts) => {
       assert.equal(reverted, true, "No funds provided");
     });
 
-    it('(passenger) cannot buy insurance above insurance limit', async () => {
+    it('passenger, cannot buy insurance above insurance limit', async () => {
       let reverted = false;
       try {
         await config.flightSuretyApp.buyInsurance(flight2.airline, flight2.flight, flight2.timestamp, {from: passenger1, value: PASSENGER_INSURANCE_VALUE_1 + 1, gasPrice: 0});
@@ -226,7 +216,7 @@ contract('Flight Surety Tests', async (accounts) => {
       assert.equal(reverted, true, "Insurance amount is above limit");
     });
 
-    it('(passenger) cannot buy insurance for the same flight twice', async () => {
+    it('passenger, cannot buy insurance for the same flight twice', async () => {
       let reverted = false;
       try {
         await config.flightSuretyApp.buyInsurance(flight2.airline, flight2.flight, flight2.timestamp, {from: passenger1, value: PASSENGER_INSURANCE_VALUE_1, gasPrice: 0});
@@ -240,8 +230,8 @@ contract('Flight Surety Tests', async (accounts) => {
     });
   });
 
-  describe('(oracles) test oracles functionality', function() {
-    it('(oracles) can register oracles', async () => {
+  describe('oracles, test oracles functionality', function() {
+    it('oracles, can register oracles', async () => {
       let fee = await config.flightSuretyApp.REGISTRATION_FEE.call();
       for(let a=1; a<TEST_ORACLES_COUNT; a++) {      
         await config.flightSuretyApp.registerOracle({from: accounts[a+ORACLES_OFFSET], value: fee});
@@ -249,7 +239,7 @@ contract('Flight Surety Tests', async (accounts) => {
       }
     });
 
-    it('(oracles) can request flight status', async () => {
+    it('oracles, can request flight status', async () => {
       let airline = flight2.airline;
       let flight = flight2.flight;
       let timestamp = flight2.timestamp;
