@@ -57,6 +57,8 @@ To build dapp for prod:
 
 Deploy the contents of the ./dapp folder
 
+## Credit
+Thanks https://github.com/thom/flightsurety for the idea to setup quick tests
 
 ## Resources
 
