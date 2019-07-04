@@ -20,7 +20,11 @@ struct Solution {
 Solution[] solutions;
 
 // DONE define a mapping to store unique solutions submitted
-mapping(uint256 => Solution) private submittedSolutions;
+mapping(uint256 => Solution) submittedSolutions;
+
+function getSolutions() external view returns(uint256){
+    return solutions.length;
+}
 
 // DONE Create an event to emit when a solution is added
 event SolutionAdded(uint256 solutionIndex, address solutionAddress);
@@ -31,7 +35,7 @@ constructor(address verifierAddress, string memory name, string memory symbol) M
 }
 
 // DONE Create a function to add the solutions to the array and emit the event
-function addSolution( address to,
+function addSolution(address to,
             uint[2] memory a,
             uint[2] memory a_p,
             uint[2][2] memory b,
@@ -42,7 +46,7 @@ function addSolution( address to,
             uint[2] memory k,
             uint[2] memory input) public {
 
-    require(solutionExist(a, a_p, b, b_p, c, c_p, h, k, input), "Solution already exist.");
+    require(!solutionExist(a, a_p, b, b_p, c, c_p, h, k, input), "Solution already exist.");
     require(verifier.verifyTx(a, a_p, b, b_p, c, c_p, h, k, input), "Solution verfication failed. ");
 
     uint256 hashIndex = hashOfSolution(a, a_p, b, b_p, c, c_p, h, k, input);
@@ -62,10 +66,10 @@ function solutionExist(uint[2] memory a,
             uint[2] memory h,
             uint[2] memory k,
             uint[2] memory input) internal view returns(bool){
-    bool unique = false;
+    bool unique = true;
     uint256 hashIndex = hashOfSolution(a, a_p, b, b_p, c, c_p, h, k, input);
     if(submittedSolutions[hashIndex].solutionAddress == address(0)){
-        unique = true;
+        unique = false;
     }
     return unique;
 }
