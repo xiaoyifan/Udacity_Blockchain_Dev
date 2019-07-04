@@ -17,10 +17,15 @@ contract('Verifier', accounts => {
             // - use the contents from proof.json generated from zokrates steps
             it('verification with correct proof', async () => {
                 result = await this.contract.verifyTx.call(
-                    successfulProof.proof.a,
-                    successfulProof.proof.b,
-                    successfulProof.proof.c,
-                    successfulProof.inputs);
+                    successfulProof.proof.A,
+                    successfulProof.proof.A_p,
+                    successfulProof.proof.B,
+                    successfulProof.proof.B_p,
+                    successfulProof.proof.C,
+                    successfulProof.proof.C_p,
+                    successfulProof.proof.H,
+                    successfulProof.proof.K,
+                    successfulProof.input);
                 assert.equal(result, true, 'Error: Verification invalid');
             });
     
@@ -30,10 +35,15 @@ contract('Verifier', accounts => {
                 let result = true;
                 try {
                     result = await this.contract.verifyTx.call(
-                    failedProof.proof.a,
-                    failedProof.proof.b,
-                    failedProof.proof.c,
-                    failedProof.inputs, {from: owner});
+                    failedProof.proof.A,
+                    failedProof.proof.A_p,
+                    failedProof.proof.B,
+                    failedProof.proof.B_p,
+                    failedProof.proof.C,
+                    failedProof.proof.C_p,
+                    failedProof.proof.H,
+                    failedProof.proof.K,
+                    failedProof.input);
                 }
                 catch(e){
                     result = false
