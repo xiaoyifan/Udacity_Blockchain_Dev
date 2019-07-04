@@ -32,15 +32,20 @@ constructor(address verifierAddress, string memory name, string memory symbol) M
 
 // DONE Create a function to add the solutions to the array and emit the event
 function addSolution( address to,
-                        uint[2] memory a,
-                        uint[2][2] memory b,
-                        uint[2] memory c,
-                        uint[2] memory input) public {
+            uint[2] memory a,
+            uint[2] memory a_p,
+            uint[2][2] memory b,
+            uint[2] memory b_p,
+            uint[2] memory c,
+            uint[2] memory c_p,
+            uint[2] memory h,
+            uint[2] memory k,
+            uint[2] memory input) public {
 
-    require(solutionExist(a, b, c, input), "Solution already exist.");
-    require(verifier.verifyTx(a, b, c, input), "Solution verfication failed. ");
+    require(solutionExist(a, a_p, b, b_p, c, c_p, h, k, input), "Solution already exist.");
+    require(verifier.verifyTx(a, a_p, b, b_p, c, c_p, h, k, input), "Solution verfication failed. ");
 
-    uint256 hashIndex = hashOfSolution(a,b,c,input);
+    uint256 hashIndex = hashOfSolution(a, a_p, b, b_p, c, c_p, h, k, input);
     solutions.push(Solution({index: hashIndex, solutionAddress: to}));
 
     submittedSolutions[hashIndex] = Solution({index: hashIndex, solutionAddress: to});
@@ -49,11 +54,16 @@ function addSolution( address to,
 }
 
 function solutionExist(uint[2] memory a,
-                        uint[2][2] memory b,
-                        uint[2] memory c,
-                        uint[2] memory input) internal view returns(bool){
+            uint[2] memory a_p,
+            uint[2][2] memory b,
+            uint[2] memory b_p,
+            uint[2] memory c,
+            uint[2] memory c_p,
+            uint[2] memory h,
+            uint[2] memory k,
+            uint[2] memory input) internal view returns(bool){
     bool unique = false;
-    uint256 hashIndex = hashOfSolution(a,b,c,input);
+    uint256 hashIndex = hashOfSolution(a, a_p, b, b_p, c, c_p, h, k, input);
     if(submittedSolutions[hashIndex].solutionAddress == address(0)){
         unique = true;
     }
@@ -61,10 +71,15 @@ function solutionExist(uint[2] memory a,
 }
 
 function hashOfSolution(uint[2] memory a,
-                        uint[2][2] memory b,
-                        uint[2] memory c,
-                        uint[2] memory input) internal pure returns (uint256){
-    return uint(keccak256(abi.encodePacked(a,b,c, input)));
+            uint[2] memory a_p,
+            uint[2][2] memory b,
+            uint[2] memory b_p,
+            uint[2] memory c,
+            uint[2] memory c_p,
+            uint[2] memory h,
+            uint[2] memory k,
+            uint[2] memory input) internal pure returns (uint256){
+    return uint(keccak256(abi.encodePacked(a, a_p, b, b_p, c, c_p, h, k, input)));
 }
 
 
@@ -73,14 +88,19 @@ function hashOfSolution(uint[2] memory a,
 //  - make sure you handle metadata as well as tokenSuplly
 function mintToken(address to, uint256 tokenId,
                         uint[2] memory a,
-                        uint[2][2] memory b,
-                        uint[2] memory c,
+            uint[2] memory a_p,
+            uint[2][2] memory b,
+            uint[2] memory b_p,
+            uint[2] memory c,
+            uint[2] memory c_p,
+            uint[2] memory h,
+            uint[2] memory k,
                         uint[2] memory input) public{
 
-    require(verifier.verifyTx(a,b,c,input), "Solution verification failed. ");
-    require(!solutionExist(a,b,c,input), "Solution already exists.");
+    require(verifier.verifyTx(a, a_p, b, b_p, c, c_p, h, k, input), "Solution verification failed. ");
+    require(!solutionExist(a, a_p, b, b_p, c, c_p, h, k, input), "Solution already exists.");
 
-    addSolution(to, a, b, c, input);
+    addSolution(to, a, a_p, b, b_p, c, c_p, h, k, input);
 
     super.mint(to, tokenId);
 
