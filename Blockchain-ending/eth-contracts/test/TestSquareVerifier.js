@@ -20,7 +20,7 @@ contract('Verifier', accounts => {
                     successfulProof.proof.a,
                     successfulProof.proof.b,
                     successfulProof.proof.c,
-                    successfulProof.inputs, {from: owner});
+                    successfulProof.inputs);
                 assert.equal(result, true, 'Error: Verification invalid');
             });
     
