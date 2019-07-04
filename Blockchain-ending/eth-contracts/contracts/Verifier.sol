@@ -1,5 +1,5 @@
 // This file is LGPL3 Licensed
-pragma solidity >=0.5.2;
+pragma solidity >=0.5.0;
 /**
  * @title Elliptic curve operations on twist points for alt_bn128
  * @author Mustafa Al-Bassam (mus@musalbas.com)
@@ -107,7 +107,7 @@ library BN256G2 {
         uint256 s,
         uint256 pt1xx, uint256 pt1xy,
         uint256 pt1yx, uint256 pt1yy
-    ) public pure returns (
+    ) public view returns (
         uint256, uint256,
         uint256, uint256
     ) {
@@ -447,7 +447,7 @@ library Pairing {
         require(success);
     }
     /// @return the sum of two points of G2
-    function addition(G2Point memory p1, G2Point memory p2) internal returns (G2Point memory r) {
+    function addition(G2Point memory p1, G2Point memory p2) internal view returns (G2Point memory r) {
         (r.X[1], r.X[0], r.Y[1], r.Y[0]) = BN256G2.ECTwistAdd(p1.X[1],p1.X[0],p1.Y[1],p1.Y[0],p2.X[1],p2.X[0],p2.Y[1],p2.Y[0]);
     }
     /// @return the product of a point on G1 and a scalar, i.e.
