@@ -27,6 +27,10 @@ contract Ownable {
         _;
     }
 
+    function getOwner() public view returns (address) {
+        return _owner;
+    }
+
     function transferOwnership(address newOwner) public onlyOwner {
         // DONE add functionality to transfer control of the contract to a newOwner.
         // make sure the new owner is a real address
@@ -543,7 +547,7 @@ contract MyCustomERC721Token is ERC721Metadata {
 
     constructor(string memory name, string memory symbol) ERC721Metadata(name, symbol, baseTokenURI) public {}
 
-    function mint(address to, uint256 tokenId) public onlyOwner() returns(bool) {
+    function mint(address to, uint256 tokenId) public onlyOwner returns(bool) {
         super._mint(to, tokenId);
         super._setTokenURI(tokenId);
         return true;

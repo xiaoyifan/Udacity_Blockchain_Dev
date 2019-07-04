@@ -11,13 +11,13 @@ module.exports = function(deployer, network, accounts) {
   .then(() => {
     deployer.deploy(SolnSquareVerifier, Verifier.address, "SquareVerifier", "SVT", {from: accounts[0]})
     .then(() => {
-        let config = {
-          localhost: {
-            url: 'http://localhost:8545',
-            dataAddress: FlightSuretyData.address,
-            appAddress: FlightSuretyApp.address
-          }
-        }
+        // let config = {
+        //   localhost: {
+        //     url: 'http://localhost:8545',
+        //     dataAddress: Verifier.address,
+        //     appAddress: SolnSquareVerifier.address
+        //   }
+        // }
     });
   });
 };

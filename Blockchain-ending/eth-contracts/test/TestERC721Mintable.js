@@ -16,9 +16,7 @@ contract('TestERC721Mintable', accounts => {
     const tokenId4 = 40;
 
     const tokenUri1 = 'https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/' + tokenId1;
-    const tokenUri2 = 'https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/' + tokenId2;
-    const tokenUri3 = 'https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/' + tokenId3;
-    const tokenUri3 = 'https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/' + tokenId4;
+
     describe('match erc721 spec', function () {
         beforeEach(async function () { 
             this.contract = await MyCustomERC721Token.new(name, symbol, {from: owner});
@@ -36,7 +34,7 @@ contract('TestERC721Mintable', accounts => {
         })
 
         it('should get token balance', async function () { 
-            result = await this.contract.balanceOf.call({from: account_one});
+            result = await this.contract.balanceOf.call(account_one, {from: owner});
             assert.equal(result, 2, "Error: Invalid balance of account_one");
         })
 
@@ -62,7 +60,7 @@ contract('TestERC721Mintable', accounts => {
         it('should fail when minting when address is not contract owner', async function () { 
             let result = true;
             try {
-                this.contract.mint.call(account_one, tokenId1, {from: account_two});
+                await this.contract.mint(account_one, tokenId1, {from: account_two});
               }
               catch(e) {
                 result = false;
