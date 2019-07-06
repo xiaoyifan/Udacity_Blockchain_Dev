@@ -67,6 +67,19 @@ and in etherscan shows:
 
 ```
 
+## List Tokens in OpenSea
+`https://rinkeby.opensea.io/assets/squareverifier`
+
+and we can see 6 tokens listed: 
+![token list](images/list_opensea.png)
+
+## Tokens Purchased
+Tokens purchased by account: 
+`0x7959dE89Dba2db24262490638f7A67Ce31477e04`
+
+![purchased](images/purchased.png)
+
+
 
 # Project Resources
 
