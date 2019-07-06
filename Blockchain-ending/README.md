@@ -48,6 +48,10 @@ The deployed addresses are:
 and in etherscan shows: 
 `https://rinkeby.etherscan.io/address/0x4fa3a27346f4A2A8F4268d1b1a33455C565E9f40`
 
+contract ABI:
+`https://github.com/xiaoyifan/Udacity_Blockchain_Dev/blob/master/Blockchain-ending/contract_abi.json`
+
+
 ## Mint tokens
 
 10 tokens minted
